@@ -30,9 +30,16 @@ var Sincerity = Sincerity || {}
  * @version 1.0
  */
 
-Sincerity.JSON = Sincerity.JSON || com.threecrickets.jvm.json.Json
+Sincerity.JSON = Sincerity.JSON || com.threecrickets.jvm.json.JSON
 
 if (Sincerity.Objects.isJVM(Sincerity.JSON)) {
+	/*if (executable.context.adapter.attributes.get('name') == 'Rhino') {
+		Sincerity.JSON.implementation = new com.threecrickets.jvm.json.rhino.RhinoJsonImplementation()
+	}
+	else {
+		Sincerity.JSON.implementation = new com.threecrickets.jvm.json.nashorn.NashornJsonImplementation()
+	}*/
+
 	/**
 	 * Streaming JSON array parser.
 	 * <p>
@@ -115,7 +122,7 @@ if (Sincerity.Objects.isJVM(Sincerity.JSON)) {
 	}())
 }
 else {
-	// Fallback to JavaScript JSON library if the com.threecrickets.jvm.json library isn't found
+	// Fallback to JSON JavaScript library if the com.threecrickets.jvm.json library isn't found
 	
 	document.require('/sincerity/internal/json2/')
 	
@@ -135,17 +142,17 @@ else {
 			}
 		}
 		else if (Sincerity.Objects.isObject(json)) {
-			if (json.$numberLong !== undefined) {
+			if (json.$long !== undefined) {
 				// Note: Rhino will not let us use java.lang.Long instances! It will
 				// immediately convert them to JavaScript Number instances.
 				
 				// It would probably be best to plug into a BigDecimal library
-				return Number(json.$numberLong)
+				return Number(json.$long)
 			}
 			
 			if (json.$date !== undefined) {
-				// See note for $numberLong
-				var timestamp = json.$date.$numberLong !== undefined ? json.$date.$numberLong : json.$date;
+				// See note for $long
+				var timestamp = json.$date.$long !== undefined ? json.$date.$long : json.$date;
 				return new Date(Number(timestamp))
 			}
 			
@@ -168,10 +175,10 @@ else {
 	 * 
 	 * @param value The extended-JSON-compatible value
 	 * @param {Boolean} [human=false] True to generate human-readable, multi-line, indented JSON
-	 * @param {Boolean} [allowCode=false] True to generate JavaScript source code where applicable (breaks JSON!)
+	 * @param {Boolean} [javaScript=false] True to generate JavaScript source code where applicable (breaks JSON!)
 	 * @returns {String} The JSON representation of value
 	 */
-	Sincerity.JSON.to = function(value, human, allowCode) {
+	Sincerity.JSON.to = function(value, human, javaScript) {
 		return JSON.stringify(value)
 		
 		// TODO: extended JSON? JavaScript mode?
@@ -181,13 +188,13 @@ else {
 	 * Converts a JSON representation into a hierarchy of JavaScript objects, arrays and strings.
 	 * 
 	 * @param {String} json The JSON string
-	 * @param {Boolean} [allowTransform=false] True to interpret MongoDB's extended JSON notation,
+	 * @param {Boolean} [extendedJson=false] True to interpret MongoDB's extended JSON notation,
 	 *        creating ObjectId, DBRef, Date, RegExp, java.lang.Long and byte array objects where noted
 	 * @returns {Object|Array}
 	 */
-	Sincerity.JSON.from = function(json, allowTransform) {
+	Sincerity.JSON.from = function(json, extendedJson) {
 		json = JSON.parse(json)
-		if (allowTransform) {
+		if (extendedJson) {
 			Sincerity.JSON.fromExtendedJSON(json)
 		}
 		return json
