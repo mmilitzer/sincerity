@@ -44,7 +44,6 @@ if (Sincerity.Objects.isJVM(Sincerity.JSON)) {
 	 * @param params
 	 * @param {String|java.io.File} [params.file] The file or its path (ignored if params.reader is used)
 	 * @param {java.io.Reader} [params.reader] A reader
-	 * @param {Boolean} [params.allowTransform] Whether to allow transformations
 	 */
 	Sincerity.Iterators.JsonArray = Sincerity.Iterators.JsonArray || Sincerity.Classes.define(function() {
 		/** @exports Public as Sincerity.Iterators.JsonArray */
@@ -62,7 +61,7 @@ if (Sincerity.Objects.isJVM(Sincerity.JSON)) {
 				this.reader = Sincerity.Files.openForTextReading(params.file, params.gzip)
 			}
 			
-			this.decoder = Sincerity.JSON.createDecoder(this.reader, params.allowTransform)
+			this.tokener = Sincerity.JSON.createTokener(this.reader)
 
 			// Make sure it's an array
 			var c = nextClean.call(this)
@@ -90,11 +89,11 @@ if (Sincerity.Objects.isJVM(Sincerity.JSON)) {
 	    		this.hasNextFlag = false
 	    	}
 	    	else if (c == ',') {
-	    		this.nextValue = this.decoder.nextValue()
+	    		this.nextValue = this.tokener.nextValue()
 	    	}
 	    	else {
-	    		this.decoder.back()
-	    		this.nextValue = this.decoder.nextValue()
+	    		this.tokener.back()
+	    		this.nextValue = this.tokener.nextValue()
 	    	}
 			
     		return value
@@ -109,7 +108,7 @@ if (Sincerity.Objects.isJVM(Sincerity.JSON)) {
 		//
 		
 		function nextClean() {
-			return java.lang.Character.toString(this.decoder.nextClean())
+			return java.lang.Character.toString(this.tokener.nextClean())
 		}
 		
 		return Public
