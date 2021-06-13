@@ -79,7 +79,7 @@
 			<module group="com.threecrickets.creel" name="creel" version="1.0.1+" />
 			<module group="org.apache.commons" name="commons-vfs" version="1.0+" />
 			<module group="org.apache.commons" name="commons-logging" version="1.1+" />
-			<module group="org.apache.ivy" name="ivy" version="2.4.0+" />
+			<module group="org.apache.ivy" name="ivy" version="2.4.0" />
 			<module group="org.jsoup" name="jsoup" version="1.8+" />
 			<!-- <module group="org.junit" name="junit" version="4.12+" /> -->
 			<module group="org.mozilla" name="rhino" version="1.7+" />
